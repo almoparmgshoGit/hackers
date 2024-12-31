@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحديد الموقع</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #output {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>تحديد الموقع الجغرافي</h1>
+    <p>اضغط على الزر أدناه للحصول على الموقع الجغرافي.</p>
+    <button onclick="getLocation()">احصل على الموقع</button>
+    <div id="output"></div>
+
+    <script>
+        function getLocation() {
+            const output = document.getElementById('output');
+
+            if (navigator.geolocation) {
+                output.innerHTML = "جاري تحديد الموقع...";
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                        output.innerHTML = `الموقع الحالي:<br> 
+                        <strong>خط العرض:</strong> ${latitude}<br> 
+                        <strong>خط الطول:</strong> ${longitude}`;
+                    },
+                    (error) => {
+                        output.innerHTML = "حدث خطأ في الحصول على الموقع. تأكد من تفعيل الموقع الجغرافي.";
+                    }
+                );
+            } else {
+                output.innerHTML = "المتصفح لا يدعم تحديد الموقع الجغرافي.";
+            }
+        }
+    </script>
+</body>
+</html>
